@@ -142,7 +142,7 @@ function metricCard(label,val,max,accent){
 function renderAll(){
   var rows=applyFilters(ALL,{branch:$("#fBranch").value,from:$("#fFrom").value,to:$("#fTo").value});
   $("#status").textContent=rows.length+" responden";
-  if(!rows.length){$("#topRow").innerHTML='<div class="hl"><div class="empty">Belum ada data untuk filter ini.</div></div>';$("#cards").innerHTML="";return}
+  if(!rows.length){$("#topRow").innerHTML='<div class="hl"><div class="empty">Belum ada data untuk filter ini.</div></div>';$("#cards").innerHTML="";$("#skmDetail").innerHTML="";return}
   var u=unitAverages(rows),na=npsAvg(rows),cr=complaintRatio(rows);
   var crPill=cr<=10?"pill-good":cr<=25?"pill-warn":"pill-bad";var crTxt=cr<=10?"Terkendali":cr<=25?"Perlu dipantau":"Tinggi";
   var npsSt=statusOf(na,5);var npsPill=npsSt.cls==="st-good"?"pill-good":npsSt.cls==="st-warn"?"pill-warn":"pill-bad";
