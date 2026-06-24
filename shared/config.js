@@ -10,10 +10,10 @@ export const API_URL =
 /* Nama klinik untuk judul */
 export const CLINIC_NAME = "MHDC — Medikids & HDC Clinic";
 
-/* Ambang batas metrik (boleh diubah sesuai kebijakan internal) */
+/* Ambang batas metrik (skala rating & NPS = 1–5) */
 export const THRESHOLDS = {
-  satisfactionMax: 4,      // skala kepuasan unit/SKM
-  npsPromoterMin: 9,       // skor >= ini = promoter
-  npsDetractorMax: 6,      // skor <= ini = detractor
-  complaintScoreMax: 2,    // jawaban skala <= ini dihitung sebagai komplain
+  satisfactionMax: 5,      // skala rating bintang
+  npsPromoterMin: 5,       // skor 5 = promoter
+  npsDetractorMax: 3,      // skor <= 3 = detractor
+  complaintScoreMax: 2,    // rating bintang <= ini = komplain
 };
