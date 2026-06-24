@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard Kepuasan Pasien — MHDC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+<div class="layout">
+
+  <!-- SIDEBAR KIRI -->
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="../shared/assets/logo.png" alt="MHDC Clinic" class="brand-logo">
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-title">Filter</div>
+      <div class="f"><label>Periode dari</label><input type="date" id="fFrom"></div>
+      <div class="f"><label>Periode sampai</label><input type="date" id="fTo"></div>
+      <div class="f"><label>Cabang</label><select id="fBranch"></select></div>
+    </div>
+
+    <div class="sidebar-foot">
+      <div class="count-badge" id="status">memuat…</div>
+    </div>
+  </aside>
+
+  <!-- KONTEN KANAN -->
+  <main class="content">
+    <h2>Ringkasan Kepuasan Pasien</h2>
+    <p class="sub">Data dari kuesioner pasien · diperbarui otomatis</p>
+
+    <div class="top-row" id="topRow"></div>
+
+    <p class="sec-title">Rata-rata Kepuasan per Layanan</p>
+    <div class="grid" id="cards"></div>
+  </main>
+
+</div>
+<script type="module" src="dashboard.js"></script>
+</body>
+</html>

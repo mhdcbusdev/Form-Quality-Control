@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Medikids QC Form</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="form.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hero">
+  <div class="hero-logo"><img src="../shared/assets/logo.png" alt="MHDC Clinic"></div>
+  <h1>Form Quality Control</h1>
+  <p class="hero-sub">Medikids Klinik Anak &amp; Tumbuh Kembang</p>
+  <div class="badges">
+    <span class="badge">🛡 Data Aman</span>
+    <span class="badge">🕐 ~3 Menit</span>
+    <span class="badge" id="branchCount">Cabang</span>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- STEPPER -->
+  <div class="stepper">
+    <div class="step-dot active" data-step="1">1</div>
+    <div class="step-line" id="line1"></div>
+    <div class="step-dot" data-step="2">2</div>
+    <div class="step-line" id="line2"></div>
+    <div class="step-dot" data-step="3">3</div>
+    <div class="step-line" id="line3"></div>
+    <div class="step-dot" data-step="4">✓</div>
+  </div>
+
+  <!-- STEP 1 -->
+  <section class="screen" id="screen1">
+    <div class="card">
+      <h2 class="card-title"><span class="ic">👤</span> DATA PASIEN</h2>
+
+      <label class="field-label">Nama Lengkap Pasien <span class="req">*</span></label>
+      <input type="text" id="nama" placeholder="Masukkan nama lengkap pasien">
+
+      <label class="field-label">Nomor Handphone <span class="req">*</span></label>
+      <input type="tel" id="hp" placeholder="Contoh: 08123456789">
+
+      <label class="field-label">Lokasi Pelayanan — Cabang Klinik <span class="req">*</span></label>
+      <select id="branch"></select>
+
+      <div class="two-col">
+        <div>
+          <label class="field-label">Umur</label>
+          <input type="number" id="umur" min="0" max="120" placeholder="Tahun">
+        </div>
+        <div>
+          <label class="field-label">Jenis Kelamin</label>
+          <div class="toggle-row">
+            <button type="button" class="toggle jk" data-val="Laki-laki">Laki-laki</button>
+            <button type="button" class="toggle jk" data-val="Perempuan">Perempuan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title"><span class="ic">📋</span> KELUHAN SETELAH PERAWATAN</h2>
+      <div class="info-box">ℹ Jika bapak/ibu mengalami keluhan setelah perawatan, silakan jelaskan agar tim kami dapat segera menindaklanjuti.</div>
+
+      <label class="field-label">Apakah ada keluhan setelah perawatan? <span class="req">*</span></label>
+      <div class="toggle-row">
+        <button type="button" class="toggle" id="keluhanYa">⚠ Ya, ada keluhan</button>
+        <button type="button" class="toggle" id="keluhanTidak">✓ Tidak ada keluhan</button>
+      </div>
+      <textarea id="keluhanText" placeholder="Ceritakan keluhan bapak/ibu secara detail..." style="display:none;margin-top:14px"></textarea>
+    </div>
+
+    <button type="button" class="btn-primary" id="toStep2">→ Lanjutkan ke Penilaian</button>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="screen" id="screen2" style="display:none">
+    <div class="card">
+      <h2 class="card-title"><span class="ic">⭐</span> PENILAIAN PELAYANAN</h2>
+      <div class="info-box">ℹ Klik bintang untuk memberikan penilaian. 1 bintang = Sangat Tidak Puas, 5 bintang = Sangat Puas.</div>
+      <div id="ratings"></div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title"><span class="ic">👥</span> REKOMENDASI &amp; KEBERSIHAN</h2>
+
+      <label class="field-label" id="npsQ"></label>
+      <div class="nps" id="npsScale"></div>
+      <div class="nps-legend"><span id="npsMin"></span><span id="npsMax"></span></div>
+
+      <label class="field-label" style="margin-top:22px">Bagaimana penilaian terhadap <b>kebersihan klinik</b> kami? <span class="req">*</span></label>
+      <div class="clean-row" id="cleanRow"></div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title"><span class="ic">💬</span> SARAN &amp; MASUKAN</h2>
+      <label class="field-label">Saran dan masukan untuk klinik kami</label>
+      <textarea id="saran" placeholder="Tuliskan saran, masukan, atau apresiasi anda untuk membantu kami berkembang lebih baik..."></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button type="button" class="btn-back" id="backTo1">←</button>
+      <button type="button" class="btn-primary" id="toStep3">→ Lanjutkan ke Kuesioner SKM</button>
+    </div>
+  </section>
+
+  <!-- STEP 3 — SKM KEMENKES -->
+  <section class="screen" id="screen3" style="display:none">
+    <div class="card">
+      <h2 class="card-title"><span class="ic">📝</span> SURVEI KEPUASAN MASYARAKAT</h2>
+      <div class="info-box">ℹ Kuesioner ini sesuai standar Indikator Nasional Mutu (INM) Kemenkes. Mohon pilih jawaban yang paling sesuai untuk tiap pertanyaan.</div>
+      <div id="skm"></div>
+    </div>
+
+    <div class="btn-row">
+      <button type="button" class="btn-back" id="backTo2">←</button>
+      <button type="button" class="btn-primary" id="submitBtn">✈ Kirim Penilaian</button>
+    </div>
+  </section>
+
+  <!-- STEP 4 — TERIMA KASIH -->
+  <section class="screen" id="screen4" style="display:none">
+    <div class="card thanks">
+      <div class="check-circle">
+        <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      </div>
+      <h2>Terima Kasih! 🙏</h2>
+      <p>Penilaian anda telah berhasil dikirim dan tersimpan.<br>Masukan bapak/ibu sangat berarti untuk meningkatkan kualitas pelayanan Medikids.</p>
+      <div class="salam">Salam sehat dari keluarga besar Medikids 💙</div>
+      <button type="button" class="btn-primary" id="resetBtn">↻ Isi Form Baru</button>
+    </div>
+  </section>
+
+</main>
+
+<script type="module" src="form.js"></script>
+</body>
+</html>
