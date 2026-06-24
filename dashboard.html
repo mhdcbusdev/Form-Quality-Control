@@ -21,7 +21,9 @@ body{margin:0;font-family:var(--font);background:var(--bg);color:var(--ink);-web
 .f input,.f select{padding:10px 12px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-family:var(--font);background:#fff;color:var(--ink);width:100%}
 .f input:focus,.f select:focus{outline:2px solid var(--blue);border-color:transparent}
 .sidebar-foot{margin-top:auto}
-.count-badge{background:#eef2f7;color:#3d4f61;padding:8px 12px;border-radius:9px;font-size:13px;font-weight:600;text-align:center}
+.count-badge{display:block;background:#eef2f7;color:#3d4f61;padding:8px 12px;border-radius:9px;font-size:13px;font-weight:600;text-align:center;text-decoration:none;cursor:pointer;transition:background .15s,color .15s}
+.count-badge:hover{background:#1f6fb8;color:#fff}
+.count-badge::after{content:" ↗";font-size:11px}
 .content{flex:1;padding:26px 30px 50px;min-width:0}
 .content>h2{font-size:19px;font-weight:700;margin:0 0 4px}
 .content>.sub{font-size:13px;color:var(--muted);margin:0 0 24px}
@@ -58,7 +60,7 @@ body{margin:0;font-family:var(--font);background:var(--bg);color:var(--ink);-web
       <div class="f"><label>Periode sampai</label><input type="date" id="fTo"></div>
       <div class="f"><label>Cabang</label><select id="fBranch"></select></div>
     </div>
-    <div class="sidebar-foot"><div class="count-badge" id="status">memuat…</div></div>
+    <div class="sidebar-foot"><a class="count-badge" id="status" href="https://docs.google.com/spreadsheets/d/1RMCrn_-eP-YOLIgXNsA7AC_lwAIy3M5vHaMrgM5hx3w/edit?usp=sharing" target="_blank" rel="noopener">memuat…</a></div>
   </aside>
   <main class="content">
     <h2>Ringkasan Kepuasan Pasien</h2>
