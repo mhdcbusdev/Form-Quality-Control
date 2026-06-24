@@ -68,16 +68,27 @@ body{margin:0;font-family:var(--font);background:var(--bg);color:var(--ink);-web
     <div class="top-row" id="topRow"></div>
     <p class="sec-title">Rata-rata Kepuasan per Layanan</p>
     <div class="grid" id="cards"></div>
+
+    <p class="sec-title" style="margin-top:28px">Rincian Survei Kepuasan Masyarakat (INM Kemenkes)</p>
+    <div class="grid" id="skmDetail"></div>
   </main>
 </div>
 <script>
 /* ====== EDIT DI SINI: tempel URL Apps Script Anda (.../exec) ====== */
 var API_URL = "https://script.google.com/macros/s/AKfycby2HRNNZBjKg_ekXIlc-pmbmFfySXr-BbNg6-NNBQSdvdxYWOUp_7sM5X0TVx94S9ZLcA/exec";
+var ACCESS_KEY = "hZ5ghVCe4EpgHgnuK_TDOpbU";
 
 /* Daftar cabang — sesuaikan */
 var BRANCHES=["Medikids Batam","Medikids Bekasi","Medikids Bintaro","Medikids Bogor","Medikids BSD","Medikids Cibinong","Medikids Cibubur","Medikids Cikarang","Medikids Cikupa","Medikids Cilegon","Medikids Cipondoh Tangerang","Medikids Cirebon","Medikids Dago Bandung","Medikids Depok","Medikids Grand Wisata","Medikids Green Terrace","Medikids JGC","Medikids Kalimalang","Medikids Karawaci","Medikids Karawang","Medikids Kebon Jeruk","Medikids Kemang","Medikids Lebak Bulus","Medikids Makassar","Medikids Malang","Medikids Padang","Medikids Palembang","Medikids Pancoran Mas","Medikids Pekanbaru","Medikids Pondok Indah","Medikids Rawamangun","Medikids Rempoa","Medikids Sawangan","Medikids Semarang","Medikids Serpong","Medikids Solo","Medikids Sunter","Medikids Surabaya","MHDC Bulog","MHDC Kalibata","MHDC Sentraya","MHDC Wisma BNI 46"];
 var THRESH = { npsPromoterMin:5, npsDetractorMax:3, complaintScoreMax:2 };
 var CLEAN_SCORE = {"Sangat Bersih":4,"Bersih":3,"Cukup Bersih":2,"Perlu Perbaikan":1};
+/* Pertanyaan SKM yang aktif (harus cocok dgn form). Skala 1-4. */
+var SKM_ITEMS=[
+  {id:"U1",label:"Alur pendaftaran & pelayanan"},
+  {id:"U3",label:"Kecepatan waktu pelayanan"},
+  {id:"U4",label:"Biaya pelayanan"},
+  {id:"U9",label:"Penanganan pengaduan"}
+];
 
 var $ = function(s){return document.querySelector(s)};
 var ALL=[];
@@ -108,6 +119,9 @@ function unitAverages(rows){return {Dokter:avgField(rows,COL.Dokter),Perawat:avg
 function cleanAvg(rows){var v=rows.map(function(r){return CLEAN_SCORE[pick(r,COL.kebersihan)]}).filter(function(x){return x!=null});return avg(v)}
 function csat(rows){var per=rows.map(function(r){var v=[num(pick(r,COL.Dokter)),num(pick(r,COL.Perawat)),num(pick(r,COL.FrontOffice))].filter(function(x){return x!=null&&x>0});return v.length?avg(v):null}).filter(function(x){return x!=null});return avg(per)}
 function nps(rows){var v=rows.map(function(r){return num(pick(r,COL.nps))}).filter(function(x){return x!=null&&x>0});if(!v.length)return{score:0,promoter:0,passive:0,detractor:0,n:0};var p=v.filter(function(x){return x>=THRESH.npsPromoterMin}).length;var d=v.filter(function(x){return x<=THRESH.npsDetractorMax}).length;return{score:Math.round((p-d)/v.length*100),promoter:p,passive:v.length-p-d,detractor:d,n:v.length}}
+function npsAvg(rows){var v=rows.map(function(r){return num(pick(r,COL.nps))}).filter(function(x){return x!=null&&x>0});return avg(v)}
+function skmItemAvg(rows,id){var v=rows.map(function(r){return num(r[id])}).filter(function(x){return x!=null&&!isNaN(x)&&x>0});return avg(v)}
+function skmOverall(rows){var all=[];rows.forEach(function(r){SKM_ITEMS.forEach(function(it){var x=num(r[it.id]);if(x!=null&&!isNaN(x)&&x>0)all.push(x);})});return avg(all)}
 function complaintRatio(rows){if(!rows.length)return 0;var c=rows.filter(function(r){
   if(String(pick(r,COL.keluhan)).toLowerCase()==="ya")return true;
   return [COL.Dokter,COL.Perawat,COL.FrontOffice].some(function(k){var x=num(pick(r,k));return x!=null&&x>0&&x<=THRESH.complaintScoreMax});
@@ -119,7 +133,7 @@ function initFilters(){
   ["#fBranch","#fFrom","#fTo"].forEach(function(s){$(s).addEventListener("change",renderAll)});
 }
 function load(){
-  fetch(API_URL+"?action=data").then(function(r){return r.json()}).then(function(o){ALL=o.rows||[];renderAll()}).catch(function(){ALL=[];$("#status").textContent="Gagal memuat";renderAll()});
+  fetch(API_URL+"?action=data&key="+encodeURIComponent(ACCESS_KEY)).then(function(r){return r.json()}).then(function(o){ALL=o.rows||[];renderAll()}).catch(function(){ALL=[];$("#status").textContent="Gagal memuat";renderAll()});
 }
 function metricCard(label,val,max,accent){
   var st=statusOf(val,max);var pct=val&&!isNaN(val)?Math.min(100,val/max*100):0;
@@ -129,17 +143,22 @@ function renderAll(){
   var rows=applyFilters(ALL,{branch:$("#fBranch").value,from:$("#fFrom").value,to:$("#fTo").value});
   $("#status").textContent=rows.length+" responden";
   if(!rows.length){$("#topRow").innerHTML='<div class="hl"><div class="empty">Belum ada data untuk filter ini.</div></div>';$("#cards").innerHTML="";return}
-  var u=unitAverages(rows),n=nps(rows),cr=complaintRatio(rows);
+  var u=unitAverages(rows),na=npsAvg(rows),cr=complaintRatio(rows);
   var crPill=cr<=10?"pill-good":cr<=25?"pill-warn":"pill-bad";var crTxt=cr<=10?"Terkendali":cr<=25?"Perlu dipantau":"Tinggi";
-  var npsPill=n.score>=50?"pill-good":n.score>=0?"pill-warn":"pill-bad";var npsTxt=n.score>=50?"Sangat baik":n.score>=0?"Cukup":"Rendah";
-  $("#topRow").innerHTML='<div class="hl" style="border-top:3px solid var(--warn)"><div class="hl-label">Complain Ratio</div><div class="hl-value">'+cr.toFixed(1)+'%</div><span class="pill '+crPill+'">'+crTxt+'</span><div class="hl-sub">Persentase responden yang menyatakan keluhan</div></div><div class="hl" style="border-top:3px solid var(--brand)"><div class="hl-label">Net Promoter Score</div><div class="hl-value">'+n.score+'</div><span class="pill '+npsPill+'">'+npsTxt+'</span><div class="hl-sub">Promoter '+n.promoter+' · Pasif '+n.passive+' · Detractor '+n.detractor+'</div></div>';
+  var npsSt=statusOf(na,5);var npsPill=npsSt.cls==="st-good"?"pill-good":npsSt.cls==="st-warn"?"pill-warn":"pill-bad";
+  $("#topRow").innerHTML='<div class="hl" style="border-top:3px solid var(--warn)"><div class="hl-label">Complain Ratio</div><div class="hl-value">'+cr.toFixed(1)+'%</div><span class="pill '+crPill+'">'+crTxt+'</span><div class="hl-sub">Persentase responden yang menyatakan keluhan</div></div><div class="hl" style="border-top:3px solid var(--brand)"><div class="hl-label">Rata-rata Rekomendasi (NPS)</div><div class="hl-value">'+fmt(na)+'<span style="font-size:18px;font-weight:600;color:var(--muted)"> / 5</span></div><span class="pill '+npsPill+'">'+npsSt.txt+'</span><div class="hl-sub">Rata-rata skor rekomendasi dari responden</div></div>';
   $("#cards").innerHTML=[
     metricCard("Front Office",u.FrontOffice,5,"var(--brand)"),
     metricCard("Perawat (PRG)",u.Perawat,5,"var(--teal)"),
     metricCard("Dokter",u.Dokter,5,"var(--blue)"),
     metricCard("Kebersihan",cleanAvg(rows),4,"var(--good)"),
-    metricCard("CSAT Klinik",csat(rows),5,"var(--warn)")
+    metricCard("CSAT Klinik",csat(rows),5,"var(--warn)"),
+    metricCard("Rata-rata SKM (INM)",skmOverall(rows),4,"#7c5cbf")
   ].join("");
+  // Rincian SKM per pertanyaan
+  $("#skmDetail").innerHTML=SKM_ITEMS.map(function(it){
+    return metricCard(it.label,skmItemAvg(rows,it.id),4,"#7c5cbf");
+  }).join("");
 }
 initFilters();load();
 </script>
