@@ -49,9 +49,9 @@ textarea{resize:vertical;min-height:90px;margin-bottom:0}
 .skm-q{padding:16px 0;border-bottom:1px solid var(--line)}.skm-q:last-child{border-bottom:none;padding-bottom:0}
 .skm-text{margin:0 0 12px;font-size:14.5px;font-weight:500;line-height:1.45}
 .skm-num{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;background:var(--info-bg);color:var(--blue);font-size:12px;font-weight:700;margin-right:6px}
-.skm-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.skm-opt{display:flex;align-items:center;gap:9px;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-size:13.5px;cursor:pointer;transition:background .12s,border-color .12s;line-height:1.3}
-.skm-opt input{accent-color:var(--blue);flex:none;margin:0}
+.skm-opts{display:grid;grid-template-columns:1fr;gap:8px}
+.skm-opt{display:flex;align-items:center;gap:11px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;cursor:pointer;transition:background .12s,border-color .12s;line-height:1.3}
+.skm-opt input{accent-color:var(--blue);flex:none;margin:0;width:18px;height:18px}
 .skm-opt span{flex:1}
 .skm-opt:has(input:checked){border-color:var(--blue);background:var(--info-bg);font-weight:600}
 .btn-primary{width:100%;background:linear-gradient(135deg,var(--blue-dark),var(--blue));color:#fff;border:none;padding:16px;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;font-family:var(--font);transition:filter .15s}
@@ -62,7 +62,7 @@ textarea{resize:vertical;min-height:90px;margin-bottom:0}
 .check-circle{width:78px;height:78px;margin:0 auto 18px;border-radius:50%;border:3px solid var(--green);display:grid;place-items:center}
 .thanks h2{margin:0 0 12px;font-size:24px}.thanks p{margin:0 0 22px;color:var(--muted2);font-size:14.5px}
 .salam{background:var(--green-soft);color:#1d7a44;border-radius:10px;padding:13px;font-size:14px;margin-bottom:22px}
-@media(max-width:440px){.hero h1{font-size:22px}.nps{gap:7px}.nps-cell label{padding:13px 0}.skm-opts{grid-template-columns:1fr}}
+@media(max-width:440px){.hero h1{font-size:22px}.nps{gap:7px}.nps-cell label{padding:13px 0}}
 </style>
 </head>
 <body>
@@ -144,9 +144,9 @@ textarea{resize:vertical;min-height:90px;margin-bottom:0}
 </main>
 <script>
 /* ====== EDIT DI SINI: tempel URL Apps Script Anda (.../exec) ====== */
-var API_URL = "https://script.google.com/macros/s/AKfycbzKrFRIyMVRXRG2pdkTT-bK9WEWYIMwDIxnI03LF20bRa-ORlMfy4XY9ZF9Ys0u-WF5Lg/exec";
+var API_URL = "https://script.google.com/macros/s/AKfycbwcNLXghwxHj2eFDPA91E2yVL7SD4AbbI8wrMCOw3e4fCcCBolAmecp8kH-gx32WsqEBw/exec";
 
-var BRANCHES=["Medikids Bintaro","Medikids BSD","Medikids Kemang","Medikids Cikarang","Medikids Malang"];
+var BRANCHES=["Medikids Batam","Medikids Bekasi","Medikids Bintaro","Medikids Bogor","Medikids BSD","Medikids Cibinong","Medikids Cibubur","Medikids Cikarang","Medikids Cikupa","Medikids Cilegon","Medikids Cipondoh Tangerang","Medikids Cirebon","Medikids Dago Bandung","Medikids Depok","Medikids Grand Wisata","Medikids Green Terrace","Medikids JGC","Medikids Kalimalang","Medikids Karawaci","Medikids Karawang","Medikids Kebon Jeruk","Medikids Kemang","Medikids Lebak Bulus","Medikids Makassar","Medikids Malang","Medikids Padang","Medikids Palembang","Medikids Pancoran Mas","Medikids Pekanbaru","Medikids Pondok Indah","Medikids Rawamangun","Medikids Rempoa","Medikids Sawangan","Medikids Semarang","Medikids Serpong","Medikids Solo","Medikids Sunter","Medikids Surabaya","MHDC Bulog","MHDC Kalibata","MHDC Sentraya","MHDC Wisma BNI 46"];
 var RATING_UNITS=[{key:"Dokter",label:"Pelayanan <b>Dokter</b>"},{key:"Perawat",label:"Pelayanan <b>Perawat</b>"},{key:"FrontOffice",label:"Pelayanan <b>Front Office</b>"}];
 var STAR_LABELS={1:{t:"Sangat Tidak Puas",e:"😟"},2:{t:"Tidak Puas",e:"🙁"},3:{t:"Cukup Puas",e:"😐"},4:{t:"Puas",e:"🙂"},5:{t:"Sangat Puas",e:"😄"}};
 var NPS_MAX=5;
