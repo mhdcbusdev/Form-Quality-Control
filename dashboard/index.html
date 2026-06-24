@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard Kepuasan Pasien — MHDC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/style.css">
+<link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+<div class="dash-wrap">
+
+  <div class="brandbar">
+    <div class="dot">M</div>
+    <div>
+      <h1 id="clinicName"></h1>
+      <p>Dashboard Kepuasan Pasien · <span id="status">memuat…</span></p>
+    </div>
+  </div>
+
+  <div class="filters card">
+    <div class="f">
+      <label>Periode dari</label>
+      <input type="date" id="fFrom">
+    </div>
+    <div class="f">
+      <label>sampai</label>
+      <input type="date" id="fTo">
+    </div>
+    <div class="f grow">
+      <label>Cabang</label>
+      <select id="fBranch"></select>
+    </div>
+  </div>
+
+  <div id="complaint" class="complaint-row"></div>
+
+  <div id="cards" class="grid"></div>
+
+  <p class="nps-detail" id="npsDetail"></p>
+
+</div>
+<script type="module" src="dashboard.js"></script>
+</body>
+</html>

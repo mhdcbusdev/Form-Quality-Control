@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kuesioner Kepuasan Pasien — MHDC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/style.css">
+<link rel="stylesheet" href="form.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brandbar">
+    <div class="dot">M</div>
+    <div>
+      <h1 id="clinicName"></h1>
+      <p>Kuesioner Kepuasan Pasien · Survei Kepuasan Masyarakat (INM)</p>
+    </div>
+  </div>
+
+  <div id="thanks" class="thanks card" style="display:none">
+    <h2>Terima kasih! 🙏</h2>
+    <p>Jawaban Anda sudah kami terima. Masukan Anda membantu kami meningkatkan pelayanan.</p>
+  </div>
+
+  <form id="surveyForm" novalidate>
+
+    <section class="card identity">
+      <div class="field">
+        <label>Cabang</label>
+        <select name="branch" id="branch" required></select>
+      </div>
+      <div class="row">
+        <div class="field"><label>Nama</label>
+          <input name="nama" type="text" placeholder="Nama Anda"></div>
+        <div class="field umur"><label>Umur</label>
+          <input name="umur" type="number" min="0" max="120" placeholder="Th"></div>
+      </div>
+      <div class="field">
+        <label>Jenis Kelamin</label>
+        <div class="inline">
+          <label class="pill"><input type="radio" name="jenisKelamin" value="Laki-laki"><span>Laki-laki</span></label>
+          <label class="pill"><input type="radio" name="jenisKelamin" value="Perempuan"><span>Perempuan</span></label>
+        </div>
+      </div>
+    </section>
+
+    <h3 class="section-title">Penilaian Pelayanan</h3>
+    <div id="skm"></div>
+
+    <h3 class="section-title">Kepuasan per Unit</h3>
+    <div id="units"></div>
+
+    <h3 class="section-title">Rekomendasi</h3>
+    <div class="q card">
+      <p class="q-text" id="npsQ"></p>
+      <div class="nps" id="npsScale"></div>
+      <div class="nps-legend"><span>Sangat tidak mungkin</span><span>Sangat mungkin</span></div>
+    </div>
+
+    <h3 class="section-title">Saran & Masukan</h3>
+    <div class="q card">
+      <textarea name="saran" rows="3" placeholder="Tuliskan saran Anda (opsional)"></textarea>
+    </div>
+
+    <button type="submit" id="submitBtn" class="btn-primary">Kirim jawaban</button>
+  </form>
+
+</div>
+<script type="module" src="form.js"></script>
+</body>
+</html>

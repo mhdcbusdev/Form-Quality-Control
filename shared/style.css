@@ -1,0 +1,55 @@
+/* ============================================================
+   STYLE BERSAMA — token desain MHDC
+   Edit warna/font di :root saja.
+   ============================================================ */
+:root {
+  --bg:        #f3f6f8;
+  --surface:   #ffffff;
+  --ink:       #14313d;   /* teal gelap */
+  --muted:     #5c7884;
+  --line:      #dde7ec;
+  --brand:     #e23744;   /* merah Medikids */
+  --teal:      #1ca7a0;   /* aksen klinis */
+  --teal-soft: #e6f6f5;
+  --amber:     #f6a623;
+  --good:      #2e9e6b;
+  --warn:      #e6803c;
+  --bad:       #d64550;
+  --radius:    16px;
+  --shadow:    0 2px 10px rgba(20,49,61,.06);
+  --font:      "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 760px; margin: 0 auto; padding: 24px 18px 64px; }
+.dash-wrap { max-width: 1100px; margin: 0 auto; padding: 24px 18px 64px; }
+
+.brandbar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 0 20px; border-bottom: 1px solid var(--line); margin-bottom: 24px;
+}
+.brandbar .dot { width: 34px; height: 34px; border-radius: 9px;
+  background: var(--brand); display: grid; place-items: center;
+  color: #fff; font-weight: 800; font-size: 15px; }
+.brandbar h1 { font-size: 17px; margin: 0; font-weight: 700; }
+.brandbar p  { margin: 0; font-size: 12.5px; color: var(--muted); }
+
+button { font-family: var(--font); cursor: pointer; }
+.btn-primary {
+  background: var(--brand); color: #fff; border: none;
+  padding: 13px 22px; border-radius: 10px; font-size: 15px; font-weight: 600;
+  transition: filter .15s; width: 100%;
+}
+.btn-primary:hover { filter: brightness(.94); }
+.btn-primary:disabled { opacity: .55; cursor: default; }
+
+.card { background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); box-shadow: var(--shadow); }
