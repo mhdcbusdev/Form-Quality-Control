@@ -81,7 +81,7 @@ var ACCESS_KEY = "hZ5ghVCe4EpgHgnuK_TDOpbU";
 /* Daftar cabang — sesuaikan */
 var BRANCHES=["Medikids Batam","Medikids Bekasi","Medikids Bintaro","Medikids Bogor","Medikids BSD","Medikids Cibinong","Medikids Cibubur","Medikids Cikarang","Medikids Cikupa","Medikids Cilegon","Medikids Cipondoh Tangerang","Medikids Cirebon","Medikids Dago Bandung","Medikids Depok","Medikids Grand Wisata","Medikids Green Terrace","Medikids JGC","Medikids Kalimalang","Medikids Karawaci","Medikids Karawang","Medikids Kebon Jeruk","Medikids Kemang","Medikids Lebak Bulus","Medikids Makassar","Medikids Malang","Medikids Padang","Medikids Palembang","Medikids Pancoran Mas","Medikids Pekanbaru","Medikids Pondok Indah","Medikids Rawamangun","Medikids Rempoa","Medikids Sawangan","Medikids Semarang","Medikids Serpong","Medikids Solo","Medikids Sunter","Medikids Surabaya","MHDC Bulog","MHDC Kalibata","MHDC Sentraya","MHDC Wisma BNI 46"];
 var THRESH = { npsPromoterMin:5, npsDetractorMax:3, complaintScoreMax:2 };
-var CLEAN_SCORE = {"Sangat Bersih":4,"Bersih":3,"Cukup Bersih":2,"Perlu Perbaikan":1};
+var CLEAN_SCORE = {"Sangat Bersih":5,"Bersih":3.75,"Cukup Bersih":2.5,"Perlu Perbaikan":1.25};
 /* Pertanyaan SKM yang aktif (harus cocok dgn form). Skala 1-4. */
 var SKM_ITEMS=[
   {id:"U1",label:"Alur pendaftaran & pelayanan"},
@@ -151,14 +151,13 @@ function renderAll(){
     metricCard("Front Office",u.FrontOffice,5,"var(--brand)"),
     metricCard("Perawat (PRG)",u.Perawat,5,"var(--teal)"),
     metricCard("Dokter",u.Dokter,5,"var(--blue)"),
-    metricCard("Kebersihan",cleanAvg(rows),4,"var(--good)"),
-    metricCard("CSAT Klinik",csat(rows),5,"var(--warn)"),
-    metricCard("Rata-rata SKM (INM)",skmOverall(rows),4,"#7c5cbf")
+    metricCard("Kebersihan",cleanAvg(rows),5,"var(--good)"),
+    metricCard("CSAT Klinik",csat(rows),5,"var(--warn)")
   ].join("");
-  // Rincian SKM per pertanyaan
-  $("#skmDetail").innerHTML=SKM_ITEMS.map(function(it){
-    return metricCard(it.label,skmItemAvg(rows,it.id),4,"#7c5cbf");
-  }).join("");
+  // Seksi SKM: rata-rata gabungan + rincian per pertanyaan
+  $("#skmDetail").innerHTML=[metricCard("Rata-rata SKM (INM)",skmOverall(rows),4,"#7c5cbf")].concat(
+    SKM_ITEMS.map(function(it){return metricCard(it.label,skmItemAvg(rows,it.id),4,"#7c5cbf");})
+  ).join("");
 }
 initFilters();load();
 </script>
