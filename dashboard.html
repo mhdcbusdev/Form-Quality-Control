@@ -123,8 +123,7 @@ function npsAvg(rows){var v=rows.map(function(r){return num(pick(r,COL.nps))}).f
 function skmItemAvg(rows,id){var v=rows.map(function(r){return num(r[id])}).filter(function(x){return x!=null&&!isNaN(x)&&x>0});return avg(v)}
 function skmOverall(rows){var all=[];rows.forEach(function(r){SKM_ITEMS.forEach(function(it){var x=num(r[it.id]);if(x!=null&&!isNaN(x)&&x>0)all.push(x);})});return avg(all)}
 function complaintRatio(rows){if(!rows.length)return 0;var c=rows.filter(function(r){
-  if(String(pick(r,COL.keluhan)).toLowerCase()==="ya")return true;
-  return [COL.Dokter,COL.Perawat,COL.FrontOffice].some(function(k){var x=num(pick(r,k));return x!=null&&x>0&&x<=THRESH.complaintScoreMax});
+  return String(pick(r,COL.keluhan)).toLowerCase()==="ya";
 }).length;return c/rows.length*100}
 function statusOf(val,max){if(!val||isNaN(val))return{txt:"Belum ada data",cls:"st-warn"};var r=val/max;if(r>=0.8)return{txt:"Baik",cls:"st-good"};if(r>=0.6)return{txt:"Cukup",cls:"st-warn"};return{txt:"Perlu perhatian",cls:"st-bad"}}
 
