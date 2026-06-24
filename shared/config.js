@@ -5,7 +5,7 @@
 /* URL Web App Google Apps Script (setelah Deploy > New deployment > Web app).
    Tempel URL /exec di sini. Form & dashboard sama-sama membacanya. */
 export const API_URL =
-  "https://script.google.com/macros/s/AKfycbzSS_C_kU4MZSK6bQEEL4QWmNaFnwEGRNsF0qtViItZWkDlOecl3TtoGZ0MMjIdkKigmg/exec";
+  "https://script.google.com/macros/s/GANTI_DENGAN_DEPLOYMENT_ID_ANDA/exec";
 
 /* Nama klinik untuk judul */
 export const CLINIC_NAME = "MHDC — Medikids & HDC Clinic";

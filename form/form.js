@@ -1,24 +1,22 @@
 /* ============================================================
-   FORM QC LOGIC — multi-step, rating bintang, submit
+   FORM QC + SKM LOGIC — multi-step, rating bintang, SKM, submit
    ============================================================ */
 import { API_URL } from "../shared/config.js";
 import { BRANCHES, RATING_UNITS, STAR_LABELS, NPS_QUESTION,
-  NPS_MIN_LABEL, NPS_MAX_LABEL, NPS_MAX, CLEANLINESS_OPTIONS }
+  NPS_MIN_LABEL, NPS_MAX_LABEL, NPS_MAX, CLEANLINESS_OPTIONS, SKM_QUESTIONS }
   from "../shared/questions.js";
 
 const $ = (s) => document.querySelector(s);
-const state = { ratings: {}, keluhan: null, kebersihan: null };
+const TOTAL_INPUT_STEPS = 3;            // langkah isian (1,2,3); langkah 4 = terima kasih
+const state = { ratings: {}, keluhan: null, kebersihan: null, jk: null };
 
 /* ---------- Render isi dinamis ---------- */
 function init() {
-  // jumlah cabang di badge
   $("#branchCount").textContent = `${BRANCHES.length} Cabang`;
 
-  // dropdown cabang
   $("#branch").innerHTML = `<option value="" disabled selected>-- Pilih Cabang Medikids --</option>` +
     BRANCHES.map(b => `<option>${b}</option>`).join("");
 
-  // rating bintang
   $("#ratings").innerHTML = RATING_UNITS.map(u => `
     <div class="rating-item">
       <div class="rating-name">${u.label}</div>
@@ -28,7 +26,6 @@ function init() {
       </div>
     </div>`).join("");
 
-  // NPS
   $("#npsQ").innerHTML = `${NPS_QUESTION} <span class="req">*</span>`;
   $("#npsMin").textContent = NPS_MIN_LABEL;
   $("#npsMax").textContent = NPS_MAX_LABEL;
@@ -37,10 +34,22 @@ function init() {
     return `<div class="nps-cell"><input type="radio" name="nps" id="nps${n}" value="${n}"><label for="nps${n}">${n}</label></div>`;
   }).join("");
 
-  // kebersihan
   $("#cleanRow").innerHTML = CLEANLINESS_OPTIONS.map(o =>
     `<button type="button" class="clean" data-val="${o.value}">${o.icon ? o.icon + " " : ""}${o.value}</button>`
   ).join("");
+
+  // 9 pertanyaan SKM Kemenkes
+  $("#skm").innerHTML = SKM_QUESTIONS.map((q, idx) => `
+    <div class="skm-q">
+      <p class="skm-text"><span class="skm-num">${idx + 1}</span> ${q.text} <span class="req">*</span></p>
+      <div class="skm-opts">
+        ${q.options.map((opt, i) => `
+          <label class="skm-opt">
+            <input type="radio" name="${q.id}" value="${i + 1}">
+            <span>${opt}</span>
+          </label>`).join("")}
+      </div>
+    </div>`).join("");
 }
 
 /* ---------- Rating bintang ---------- */
@@ -74,6 +83,17 @@ function bindKeluhan() {
   });
 }
 
+/* ---------- Toggle jenis kelamin ---------- */
+function bindJK() {
+  document.querySelectorAll(".jk").forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.jk = btn.dataset.val;
+      document.querySelectorAll(".jk").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    });
+  });
+}
+
 /* ---------- Toggle kebersihan ---------- */
 function bindKebersihan() {
   document.querySelectorAll("#cleanRow .clean").forEach(btn => {
@@ -85,20 +105,20 @@ function bindKebersihan() {
   });
 }
 
-/* ---------- Navigasi step ---------- */
+/* ---------- Navigasi step (1–4) ---------- */
 function showStep(n) {
-  [1,2,3].forEach(i => $("#screen" + i).style.display = (i === n ? "block" : "none"));
+  [1,2,3,4].forEach(i => $("#screen" + i).style.display = (i === n ? "block" : "none"));
   const dots = document.querySelectorAll(".step-dot");
-  const lines = [$("#line1"), $("#line2")];
+  const lines = [$("#line1"), $("#line2"), $("#line3")];
   dots.forEach((d, i) => {
     d.classList.toggle("active", i + 1 === n);
     d.classList.toggle("done", i + 1 < n);
   });
-  lines.forEach((l, i) => l.classList.toggle("done", i + 1 < n));
+  lines.forEach((l, i) => l && l.classList.toggle("done", i + 1 < n));
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-/* ---------- Validasi step 1 ---------- */
+/* ---------- Validasi ---------- */
 function validateStep1() {
   if (!$("#nama").value.trim()) return alert("Mohon isi nama lengkap pasien."), false;
   if (!$("#hp").value.trim())   return alert("Mohon isi nomor handphone."), false;
@@ -106,13 +126,30 @@ function validateStep1() {
   if (!state.keluhan)           return alert("Mohon pilih apakah ada keluhan."), false;
   return true;
 }
+function validateStep2() {
+  if (!document.querySelector('input[name="nps"]:checked'))
+    return alert("Mohon pilih skor rekomendasi (NPS)."), false;
+  if (!state.kebersihan) return alert("Mohon pilih penilaian kebersihan klinik."), false;
+  return true;
+}
+function validateSKM() {
+  for (const q of SKM_QUESTIONS) {
+    if (!document.querySelector(`input[name="${q.id}"]:checked`)) {
+      alert(`Mohon jawab semua pertanyaan SKM (pertanyaan no. ${SKM_QUESTIONS.indexOf(q) + 1} belum diisi).`);
+      return false;
+    }
+  }
+  return true;
+}
 
 /* ---------- Kumpulkan & submit ---------- */
 function collect() {
-  return {
+  const data = {
     nama: $("#nama").value.trim(),
     hp: $("#hp").value.trim(),
     branch: $("#branch").value,
+    umur: $("#umur").value.trim(),
+    jenisKelamin: state.jk ?? "",
     keluhan: state.keluhan,
     keluhanText: $("#keluhanText").value.trim(),
     Dokter: state.ratings.Dokter ?? "",
@@ -122,10 +159,14 @@ function collect() {
     kebersihan: state.kebersihan ?? "",
     saran: $("#saran").value.trim(),
   };
+  SKM_QUESTIONS.forEach(q => {
+    data[q.id] = (document.querySelector(`input[name="${q.id}"]:checked`) || {}).value ?? "";
+  });
+  return data;
 }
 
 async function submit() {
-  if (!state.kebersihan) return alert("Mohon pilih penilaian kebersihan klinik.");
+  if (!validateSKM()) return;
   const btn = $("#submitBtn");
   btn.disabled = true; btn.textContent = "Mengirim…";
   try {
@@ -134,19 +175,20 @@ async function submit() {
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify(collect()),
     });
-    showStep(3);
+    showStep(4);
   } catch (e) {
     alert("Gagal mengirim. Periksa koneksi lalu coba lagi.");
   }
   btn.disabled = false; btn.textContent = "✈ Kirim Penilaian";
 }
 
-/* ---------- Reset ---------- */
 function reset() { location.reload(); }
 
-/* ---------- Bind tombol ---------- */
-init(); bindStars(); bindKeluhan(); bindKebersihan();
+/* ---------- Bind ---------- */
+init(); bindStars(); bindKeluhan(); bindJK(); bindKebersihan();
 $("#toStep2").addEventListener("click", () => { if (validateStep1()) showStep(2); });
+$("#toStep3").addEventListener("click", () => { if (validateStep2()) showStep(3); });
 $("#backTo1").addEventListener("click", () => showStep(1));
+$("#backTo2").addEventListener("click", () => showStep(2));
 $("#submitBtn").addEventListener("click", submit);
 $("#resetBtn").addEventListener("click", reset);

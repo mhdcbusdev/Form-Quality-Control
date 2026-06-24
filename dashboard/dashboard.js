@@ -1,5 +1,5 @@
 /* ============================================================
-   DASHBOARD LOGIC — fetch, filter, render
+   DASHBOARD LOGIC — fetch, filter, render (versi profesional)
    ============================================================ */
 import { API_URL, CLINIC_NAME } from "../shared/config.js";
 import { BRANCHES } from "../shared/questions.js";
@@ -10,8 +10,16 @@ const $ = (s) => document.querySelector(s);
 let ALL_ROWS = [];
 const fmt = (n) => (!n || isNaN(n) ? "–" : n.toFixed(2));
 
+/* Status berdasarkan rasio nilai/maks */
+function statusOf(val, max) {
+  if (!val || isNaN(val)) return { txt: "Belum ada data", cls: "st-warn", pill: "pill-warn" };
+  const r = val / max;
+  if (r >= 0.8) return { txt: "Baik", cls: "st-good", pill: "pill-good" };
+  if (r >= 0.6) return { txt: "Cukup", cls: "st-warn", pill: "pill-warn" };
+  return { txt: "Perlu perhatian", cls: "st-bad", pill: "pill-bad" };
+}
+
 function initFilters() {
-  $("#clinicName").textContent = CLINIC_NAME;
   $("#fBranch").innerHTML = `<option value="ALL">Semua cabang</option>` +
     BRANCHES.map(b => `<option>${b}</option>`).join("");
   ["#fBranch", "#fFrom", "#fTo"].forEach(s => $(s).addEventListener("change", renderAll));
@@ -24,20 +32,21 @@ async function load() {
     ALL_ROWS = out.rows || [];
   } catch (e) {
     ALL_ROWS = [];
-    $("#status").textContent = "Gagal memuat data — periksa API_URL di config.js.";
+    $("#status").textContent = "Gagal memuat";
   }
   renderAll();
 }
 
-function card(label, value, opts = {}) {
-  const { max, accent = "var(--teal)", suffix = "" } = opts;
-  const bar = max
-    ? `<div class="bar"><div class="bar-fill" style="width:${Math.min(100,(parseFloat(value)/max)*100||0)}%;background:${accent}"></div></div>`
-    : "";
-  return `<div class="metric card" style="--accent:${accent}">
-      <div class="m-label">${label}</div>
-      <div class="m-value">${value}${suffix}${max ? `<span class="m-max">/ ${max}</span>` : ""}</div>
-      ${bar}</div>`;
+function metricCard(label, val, max, accent) {
+  const v = fmt(val);
+  const st = statusOf(val, max);
+  const pct = val && !isNaN(val) ? Math.min(100, (val / max) * 100) : 0;
+  return `<div class="metric" style="--accent:${accent}">
+    <div class="m-label">${label}</div>
+    <div class="m-figure"><span class="m-value">${v}</span><span class="m-max">/ ${max}</span></div>
+    <div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>
+    <div class="m-status ${st.cls}">${st.txt}</div>
+  </div>`;
 }
 
 function renderAll() {
@@ -46,24 +55,43 @@ function renderAll() {
   });
   $("#status").textContent = `${rows.length} responden`;
 
+  if (!rows.length) {
+    $("#topRow").innerHTML = `<div class="hl"><div class="empty">Belum ada data untuk filter ini.</div></div>`;
+    $("#cards").innerHTML = "";
+    return;
+  }
+
   const u = unitAverages(rows);
   const n = nps(rows);
+  const cr = complaintRatio(rows);
 
-  $("#complaint").innerHTML = card("Complain Ratio", complaintRatio(rows).toFixed(1),
-    { suffix: "%", accent: "var(--amber)" });
+  // Highlight: Complain Ratio + NPS
+  const crPill = cr <= 10 ? "pill-good" : cr <= 25 ? "pill-warn" : "pill-bad";
+  const crTxt  = cr <= 10 ? "Terkendali" : cr <= 25 ? "Perlu dipantau" : "Tinggi";
+  const npsPill = n.score >= 50 ? "pill-good" : n.score >= 0 ? "pill-warn" : "pill-bad";
+  const npsTxt  = n.score >= 50 ? "Sangat baik" : n.score >= 0 ? "Cukup" : "Rendah";
+
+  $("#topRow").innerHTML = `
+    <div class="hl" style="border-top:3px solid var(--warn)">
+      <div class="hl-label">Complain Ratio</div>
+      <div class="hl-value">${cr.toFixed(1)}%</div>
+      <span class="pill ${crPill}">${crTxt}</span>
+      <div class="hl-sub">Persentase responden yang menyatakan keluhan</div>
+    </div>
+    <div class="hl" style="border-top:3px solid var(--brand)">
+      <div class="hl-label">Net Promoter Score</div>
+      <div class="hl-value">${n.score}</div>
+      <span class="pill ${npsPill}">${npsTxt}</span>
+      <div class="hl-sub">Promoter ${n.promoter} · Pasif ${n.passive} · Detractor ${n.detractor}</div>
+    </div>`;
 
   $("#cards").innerHTML = [
-    card("Rata-rata Kepuasan Front Office", fmt(u.FrontOffice), { max: 5, accent: "var(--brand)" }),
-    card("Rata-rata Kepuasan Perawat",      fmt(u.Perawat),     { max: 5, accent: "var(--teal)" }),
-    card("Rata-rata Kepuasan Dokter",       fmt(u.Dokter),      { max: 5, accent: "#6b8a99" }),
-    card("Rata-rata Kebersihan",            fmt(cleanlinessAvg(rows)), { max: 4, accent: "var(--good)" }),
-    card("CSAT Klinik",                     fmt(csat(rows)),    { max: 5, accent: "var(--amber)" }),
-    card("Net Promoter Score",              n.score,            { accent: "var(--bad)" }),
+    metricCard("Front Office",  u.FrontOffice,        5, "var(--brand)"),
+    metricCard("Perawat (PRG)", u.Perawat,            5, "var(--teal)"),
+    metricCard("Dokter",        u.Dokter,             5, "var(--blue)"),
+    metricCard("Kebersihan",    cleanlinessAvg(rows), 4, "var(--good)"),
+    metricCard("CSAT Klinik",   csat(rows),           5, "var(--warn)"),
   ].join("");
-
-  $("#npsDetail").innerHTML = n.n
-    ? `Promoter ${n.promoter} · Pasif ${n.passive} · Detractor ${n.detractor} (n=${n.n})`
-    : "Belum ada data NPS";
 }
 
 initFilters(); load();

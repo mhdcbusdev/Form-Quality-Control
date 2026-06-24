@@ -6,40 +6,39 @@
 <title>Dashboard Kepuasan Pasien — MHDC</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../shared/style.css">
 <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
-<div class="dash-wrap">
+<div class="layout">
 
-  <div class="brandbar">
-    <div class="dot">M</div>
-    <div>
-      <h1 id="clinicName"></h1>
-      <p>Dashboard Kepuasan Pasien · <span id="status">memuat…</span></p>
+  <!-- SIDEBAR KIRI -->
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="../shared/assets/logo.png" alt="MHDC Clinic" class="brand-logo">
     </div>
-  </div>
 
-  <div class="filters card">
-    <div class="f">
-      <label>Periode dari</label>
-      <input type="date" id="fFrom">
+    <div class="nav-group">
+      <div class="nav-title">Filter</div>
+      <div class="f"><label>Periode dari</label><input type="date" id="fFrom"></div>
+      <div class="f"><label>Periode sampai</label><input type="date" id="fTo"></div>
+      <div class="f"><label>Cabang</label><select id="fBranch"></select></div>
     </div>
-    <div class="f">
-      <label>sampai</label>
-      <input type="date" id="fTo">
+
+    <div class="sidebar-foot">
+      <div class="count-badge" id="status">memuat…</div>
     </div>
-    <div class="f grow">
-      <label>Cabang</label>
-      <select id="fBranch"></select>
-    </div>
-  </div>
+  </aside>
 
-  <div id="complaint" class="complaint-row"></div>
+  <!-- KONTEN KANAN -->
+  <main class="content">
+    <h2>Ringkasan Kepuasan Pasien</h2>
+    <p class="sub">Data dari kuesioner pasien · diperbarui otomatis</p>
 
-  <div id="cards" class="grid"></div>
+    <div class="top-row" id="topRow"></div>
 
-  <p class="nps-detail" id="npsDetail"></p>
+    <p class="sec-title">Rata-rata Kepuasan per Layanan</p>
+    <div class="grid" id="cards"></div>
+  </main>
 
 </div>
 <script type="module" src="dashboard.js"></script>

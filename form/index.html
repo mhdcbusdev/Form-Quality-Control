@@ -12,11 +12,7 @@
 
 <!-- HEADER -->
 <header class="hero">
-  <div class="hero-icon">
-    <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M3 12h4l2 5 4-12 2 7h6"/>
-    </svg>
-  </div>
+  <div class="hero-logo"><img src="../shared/assets/logo.png" alt="MHDC Clinic"></div>
   <h1>Form Quality Control</h1>
   <p class="hero-sub">Medikids Klinik Anak &amp; Tumbuh Kembang</p>
   <div class="badges">
@@ -34,7 +30,9 @@
     <div class="step-line" id="line1"></div>
     <div class="step-dot" data-step="2">2</div>
     <div class="step-line" id="line2"></div>
-    <div class="step-dot" data-step="3">✓</div>
+    <div class="step-dot" data-step="3">3</div>
+    <div class="step-line" id="line3"></div>
+    <div class="step-dot" data-step="4">✓</div>
   </div>
 
   <!-- STEP 1 -->
@@ -50,6 +48,20 @@
 
       <label class="field-label">Lokasi Pelayanan — Cabang Klinik <span class="req">*</span></label>
       <select id="branch"></select>
+
+      <div class="two-col">
+        <div>
+          <label class="field-label">Umur</label>
+          <input type="number" id="umur" min="0" max="120" placeholder="Tahun">
+        </div>
+        <div>
+          <label class="field-label">Jenis Kelamin</label>
+          <div class="toggle-row">
+            <button type="button" class="toggle jk" data-val="Laki-laki">Laki-laki</button>
+            <button type="button" class="toggle jk" data-val="Perempuan">Perempuan</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -94,12 +106,26 @@
 
     <div class="btn-row">
       <button type="button" class="btn-back" id="backTo1">←</button>
+      <button type="button" class="btn-primary" id="toStep3">→ Lanjutkan ke Kuesioner SKM</button>
+    </div>
+  </section>
+
+  <!-- STEP 3 — SKM KEMENKES -->
+  <section class="screen" id="screen3" style="display:none">
+    <div class="card">
+      <h2 class="card-title"><span class="ic">📝</span> SURVEI KEPUASAN MASYARAKAT</h2>
+      <div class="info-box">ℹ Kuesioner ini sesuai standar Indikator Nasional Mutu (INM) Kemenkes. Mohon pilih jawaban yang paling sesuai untuk tiap pertanyaan.</div>
+      <div id="skm"></div>
+    </div>
+
+    <div class="btn-row">
+      <button type="button" class="btn-back" id="backTo2">←</button>
       <button type="button" class="btn-primary" id="submitBtn">✈ Kirim Penilaian</button>
     </div>
   </section>
 
-  <!-- STEP 3 -->
-  <section class="screen" id="screen3" style="display:none">
+  <!-- STEP 4 — TERIMA KASIH -->
+  <section class="screen" id="screen4" style="display:none">
     <div class="card thanks">
       <div class="check-circle">
         <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
