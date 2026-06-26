@@ -11,7 +11,7 @@
 *{box-sizing:border-box}
 body{margin:0;font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
 .layout{display:flex;min-height:100vh}
-.sidebar{width:260px;flex:none;background:var(--surface);border-right:1px solid var(--line);padding:22px 18px;display:flex;flex-direction:column;gap:22px}
+.sidebar{width:260px;flex:none;background:var(--surface);border-right:1px solid var(--line);padding:22px 18px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;align-self:flex-start;max-height:100vh;overflow-y:auto}
 .brand{display:flex;align-items:center;justify-content:center;padding-bottom:18px;border-bottom:1px solid var(--line)}
 .brand-logo{width:100%;max-width:220px;height:auto;object-fit:contain}
 .nav-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
@@ -47,7 +47,7 @@ body{margin:0;font-family:var(--font);background:var(--bg);color:var(--ink);-web
 .pill-good{background:#e6f6ec;color:var(--good)}.pill-warn{background:#fdf0db;color:var(--warn)}.pill-bad{background:#fbe7e6;color:var(--bad)}
 .empty{text-align:center;color:var(--muted);font-size:14px;padding:40px}
 @media(min-width:1000px){.grid{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:760px){.layout{flex-direction:column}.sidebar{width:auto;border-right:none;border-bottom:1px solid var(--line)}.content{padding:20px 18px 40px}.top-row{grid-template-columns:1fr}}
+@media(max-width:760px){.layout{flex-direction:column}.sidebar{width:auto;border-right:none;border-bottom:1px solid var(--line);position:static;max-height:none;overflow:visible}.content{padding:20px 18px 40px}.top-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
