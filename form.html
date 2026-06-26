@@ -117,7 +117,7 @@ textarea{resize:vertical;min-height:90px;margin-bottom:0}
       <div class="nps" id="npsScale"></div>
       <div class="nps-legend"><span id="npsMin"></span><span id="npsMax"></span></div>
       <label class="field-label" style="margin-top:22px">Bagaimana penilaian terhadap <b>kebersihan klinik</b> kami? <span class="req">*</span></label>
-      <div class="clean-row" id="cleanRow"></div>
+      <div class="nps" id="cleanScale"></div>
     </div>
     <div class="card">
       <h2 class="card-title"><span class="ic">📝</span> SURVEI KEPUASAN MASYARAKAT</h2>
@@ -151,7 +151,6 @@ var BRANCHES=["Medikids Batam","Medikids Bekasi","Medikids Bintaro","Medikids Bo
 var RATING_UNITS=[{key:"Dokter",label:"Pelayanan <b>Dokter</b>"},{key:"Perawat",label:"Pelayanan <b>Perawat</b>"},{key:"FrontOffice",label:"Pelayanan <b>Front Office</b>"}];
 var STAR_LABELS={1:{t:"Sangat Tidak Puas",e:"😟"},2:{t:"Tidak Puas",e:"🙁"},3:{t:"Cukup Puas",e:"😐"},4:{t:"Puas",e:"🙂"},5:{t:"Sangat Puas",e:"😄"}};
 var NPS_MAX=5;
-var CLEAN=["Sangat Bersih","Bersih","Cukup Bersih","Perlu Perbaikan"];
 var SKM=[
 {id:"U1",t:"Bagaimana penilaian terhadap alur pendaftaran dan pelayanan di klinik?",o:["Tidak sesuai","Kurang sesuai","Sesuai","Sangat sesuai"]},
 {id:"U3",t:"Bagaimana penilaian terhadap kecepatan waktu pelayanan di klinik?",o:["Tidak cepat","Kurang cepat","Cepat","Sangat cepat"]},
@@ -170,7 +169,7 @@ function init(){
   $("#npsMin").textContent="1 = Sangat tidak mungkin";$("#npsMax").textContent="5 = Sangat mungkin";
   var h="";for(var i=1;i<=NPS_MAX;i++){h+='<div class="nps-cell"><input type="radio" name="nps" id="nps'+i+'" value="'+i+'"><label for="nps'+i+'">'+i+'</label></div>'}
   $("#npsScale").innerHTML=h;
-  $("#cleanRow").innerHTML=CLEAN.map(function(c){return '<button type="button" class="clean" data-val="'+c+'">'+c+'</button>'}).join("");
+  $("#cleanScale").innerHTML="";var ch="";for(var k=1;k<=5;k++){ch+='<div class="nps-cell"><input type="radio" name="kebersihan" id="clean'+k+'" value="'+k+'"><label for="clean'+k+'">'+k+'</label></div>'}$("#cleanScale").innerHTML=ch;
   $("#skm").innerHTML=SKM.map(function(q,idx){return '<div class="skm-q"><p class="skm-text"><span class="skm-num">'+(idx+1)+'</span> '+q.t+' <span class="req">*</span></p><div class="skm-opts">'+q.o.map(function(opt,i){return '<label class="skm-opt"><input type="radio" name="'+q.id+'" value="'+(i+1)+'"><span>'+opt+'</span></label>'}).join("")+'</div></div>'}).join("");
 }
 function bindStars(){
@@ -187,19 +186,27 @@ function bindToggle(){
   $("#keluhanYa").addEventListener("click",function(){state.keluhan="Ya";$("#keluhanYa").classList.add("active");$("#keluhanTidak").classList.remove("active");$("#keluhanText").style.display="block"});
   $("#keluhanTidak").addEventListener("click",function(){state.keluhan="Tidak";$("#keluhanTidak").classList.add("active");$("#keluhanYa").classList.remove("active");$("#keluhanText").style.display="none";$("#keluhanText").value=""});
   document.querySelectorAll(".jk").forEach(function(b){b.addEventListener("click",function(){state.jk=b.dataset.val;document.querySelectorAll(".jk").forEach(function(x){x.classList.remove("active")});b.classList.add("active")})});
-  document.querySelectorAll("#cleanRow .clean").forEach(function(b){b.addEventListener("click",function(){state.kebersihan=b.dataset.val;document.querySelectorAll("#cleanRow .clean").forEach(function(x){x.classList.remove("active")});b.classList.add("active")})});
+  
 }
 function showStep(n){
   [1,2,3].forEach(function(i){$("#screen"+i).style.display=(i===n?"block":"none")});
   var dots=document.querySelectorAll(".step-dot"),lines=[$("#line1"),$("#line2")];
   dots.forEach(function(d,i){d.classList.toggle("active",i+1===n);d.classList.toggle("done",i+1<n)});
   lines.forEach(function(l,i){if(l)l.classList.toggle("done",i+1<n)});
-  window.scrollTo({top:0,behavior:"smooth"});
+  scrollToTop();
+}
+function scrollToTop(){
+  // Gulir halaman ini ke atas (berlaku saat dibuka langsung / standalone)
+  try{window.scrollTo({top:0,behavior:"smooth"});}catch(e){window.scrollTo(0,0);}
+  // Jika di dalam iframe (mis. embed WordPress), minta halaman induk menggulir ke posisi form
+  if(window.parent && window.parent!==window){
+    try{window.parent.postMessage({mhdcForm:"scrollTop"},"*");}catch(e){}
+  }
 }
 function vStep1(){if(!$("#nama").value.trim()){alert("Mohon isi nama lengkap pasien.");return false}if(!$("#hp").value.trim()){alert("Mohon isi nomor handphone.");return false}if(!$("#branch").value){alert("Mohon pilih cabang klinik.");return false}if(!$("#umur").value.trim()){alert("Mohon isi umur pasien.");return false}if(!state.jk){alert("Mohon pilih jenis kelamin.");return false}if(!state.keluhan){alert("Mohon pilih apakah ada keluhan.");return false}if(state.keluhan==="Ya"&&!$("#keluhanText").value.trim()){alert("Mohon jelaskan keluhannya.");$("#keluhanText").focus();return false}return true}
-function vStep2(){for(var j=0;j<RATING_UNITS.length;j++){if(!state.ratings[RATING_UNITS[j].key]){alert("Mohon beri penilaian bintang untuk semua layanan.");return false}}if(!document.querySelector('input[name="nps"]:checked')){alert("Mohon pilih skor rekomendasi (NPS).");return false}if(!state.kebersihan){alert("Mohon pilih penilaian kebersihan.");return false}for(var i=0;i<SKM.length;i++){if(!document.querySelector('input[name="'+SKM[i].id+'"]:checked')){alert("Mohon jawab semua pertanyaan SKM (no. "+(i+1)+" belum diisi).");return false}}return true}
+function vStep2(){for(var j=0;j<RATING_UNITS.length;j++){if(!state.ratings[RATING_UNITS[j].key]){alert("Mohon beri penilaian bintang untuk semua layanan.");return false}}if(!document.querySelector('input[name="nps"]:checked')){alert("Mohon pilih skor rekomendasi (NPS).");return false}if(!document.querySelector('input[name="kebersihan"]:checked')){alert("Mohon pilih penilaian kebersihan.");return false}for(var i=0;i<SKM.length;i++){if(!document.querySelector('input[name="'+SKM[i].id+'"]:checked')){alert("Mohon jawab semua pertanyaan SKM (no. "+(i+1)+" belum diisi).");return false}}return true}
 function collect(){
-  var d={key:ACCESS_KEY,nama:$("#nama").value.trim(),hp:$("#hp").value.trim(),branch:$("#branch").value,umur:$("#umur").value.trim(),jenisKelamin:state.jk||"",keluhan:state.keluhan,keluhanText:$("#keluhanText").value.trim(),Dokter:state.ratings.Dokter||"",Perawat:state.ratings.Perawat||"",FrontOffice:state.ratings.FrontOffice||"",nps:(document.querySelector('input[name="nps"]:checked')||{}).value||"",kebersihan:state.kebersihan||"",saran:$("#saran").value.trim()};
+  var d={key:ACCESS_KEY,nama:$("#nama").value.trim(),hp:$("#hp").value.trim(),branch:$("#branch").value,umur:$("#umur").value.trim(),jenisKelamin:state.jk||"",keluhan:state.keluhan,keluhanText:$("#keluhanText").value.trim(),Dokter:state.ratings.Dokter||"",Perawat:state.ratings.Perawat||"",FrontOffice:state.ratings.FrontOffice||"",nps:(document.querySelector('input[name="nps"]:checked')||{}).value||"",kebersihan:(document.querySelector('input[name="kebersihan"]:checked')||{}).value||"",saran:$("#saran").value.trim()};
   SKM.forEach(function(q){d[q.id]=(document.querySelector('input[name="'+q.id+'"]:checked')||{}).value||""});
   return d;
 }
@@ -212,6 +219,8 @@ function submit(){
     .finally(function(){btn.disabled=false;btn.textContent="✈ Kirim Penilaian"});
 }
 init();bindStars();bindToggle();
+// Saat form selesai dimuat: minta halaman induk (WordPress) menggulir ke posisi form
+window.addEventListener("load",function(){scrollToTop();});
 $("#toStep2").addEventListener("click",function(){if(vStep1())showStep(2)});
 $("#backTo1").addEventListener("click",function(){showStep(1)});
 $("#submitBtn").addEventListener("click",submit);
