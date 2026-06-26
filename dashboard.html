@@ -11,6 +11,7 @@
 *{box-sizing:border-box}
 body{margin:0;font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
 .layout{display:flex;min-height:100vh}
+/* SIDEBAR STICKY v2 - menempel saat scroll */
 .sidebar{width:260px;flex:none;background:var(--surface);border-right:1px solid var(--line);padding:22px 18px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;align-self:flex-start;max-height:100vh;overflow-y:auto}
 .brand{display:flex;align-items:center;justify-content:center;padding-bottom:18px;border-bottom:1px solid var(--line)}
 .brand-logo{width:100%;max-width:220px;height:auto;object-fit:contain}
@@ -21,9 +22,15 @@ body{margin:0;font-family:var(--font);background:var(--bg);color:var(--ink);-web
 .f input,.f select{padding:10px 12px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-family:var(--font);background:#fff;color:var(--ink);width:100%}
 .f input:focus,.f select:focus{outline:2px solid var(--blue);border-color:transparent}
 .sidebar-foot{margin-top:auto}
-.count-badge{display:block;background:#eef2f7;color:#3d4f61;padding:8px 12px;border-radius:9px;font-size:13px;font-weight:600;text-align:center;text-decoration:none;cursor:pointer;transition:background .15s,color .15s}
+.count-badge{display:block;width:100%;border:0;font-family:inherit;background:#eef2f7;color:#3d4f61;padding:8px 12px;border-radius:9px;font-size:13px;font-weight:600;text-align:center;cursor:pointer;transition:background .15s,color .15s}
 .count-badge:hover{background:#1f6fb8;color:#fff}
-.count-badge::after{content:" ↗";font-size:11px}
+.count-badge::after{content:" ⊞";font-size:13px}
+/* Tabel jawaban per cabang */
+.ans-wrap{margin-top:26px;overflow-x:auto}
+.ans-table{width:100%;border-collapse:collapse;font-size:12.5px;background:#fff;border-radius:10px;overflow:hidden}
+.ans-table th{background:#1f6fb8;color:#fff;font-weight:600;text-align:left;padding:9px 11px;white-space:nowrap}
+.ans-table td{padding:8px 11px;border-top:1px solid var(--line);vertical-align:top}
+.ans-table tr:nth-child(even) td{background:#f7f9fb}
 .content{flex:1;padding:26px 30px 50px;min-width:0}
 .content>h2{font-size:19px;font-weight:700;margin:0 0 4px}
 .content>.sub{font-size:13px;color:var(--muted);margin:0 0 24px}
@@ -60,7 +67,7 @@ body{margin:0;font-family:var(--font);background:var(--bg);color:var(--ink);-web
       <div class="f"><label>Periode sampai</label><input type="date" id="fTo"></div>
       <div class="f"><label>Cabang</label><select id="fBranch"></select></div>
     </div>
-    <div class="sidebar-foot"><a class="count-badge" id="status" href="https://docs.google.com/spreadsheets/d/1RMCrn_-eP-YOLIgXNsA7AC_lwAIy3M5vHaMrgM5hx3w/edit?usp=sharing" target="_blank" rel="noopener">memuat…</a></div>
+    <div class="sidebar-foot"><button class="count-badge" id="status" type="button">memuat…</button></div>
   </aside>
   <main class="content">
     <h2>Ringkasan Kepuasan Pasien</h2>
@@ -71,6 +78,8 @@ body{margin:0;font-family:var(--font);background:var(--bg);color:var(--ink);-web
 
     <p class="sec-title" style="margin-top:28px">Rincian Survei Kepuasan Masyarakat (INM Kemenkes)</p>
     <div class="grid" id="skmDetail"></div>
+
+    <div class="ans-wrap" id="ansWrap" style="display:none"></div>
   </main>
 </div>
 <script>
@@ -92,6 +101,34 @@ var SKM_ITEMS=[
 
 var $ = function(s){return document.querySelector(s)};
 var ALL=[];
+var FILTERED=[];
+var ansVisible=false;
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function renderAnswers(){
+  var rows=FILTERED;
+  if(!rows.length){$("#ansWrap").innerHTML='<p class="sec-title">Jawaban Responden</p><div class="hl"><div class="empty">Belum ada data untuk filter ini.</div></div>';return;}
+  var head=["Waktu","Cabang","Nama","Umur","Jenis Kelamin","Dokter","Perawat","Front Office","NPS","Kebersihan","Ada Keluhan?","Detail Keluhan","Saran"];
+  var keys=[COL.timestamp,COL.branch,["nama","Nama"],["umur","Umur"],["jenisKelamin","Jenis Kelamin"],COL.Dokter,COL.Perawat,COL.FrontOffice,COL.nps,COL.kebersihan,COL.keluhan,["keluhanText","Detail Keluhan"],["saran","Saran"]];
+  var html='<p class="sec-title">Jawaban Responden ('+rows.length+')</p><table class="ans-table"><thead><tr>';
+  head.forEach(function(h){html+='<th>'+h+'</th>';});
+  html+='</tr></thead><tbody>';
+  rows.forEach(function(r){
+    html+='<tr>';
+    keys.forEach(function(k){
+      var v=pick(r,k);
+      if(k===COL.timestamp&&v){var d=new Date(v);if(!isNaN(d))v=d.toLocaleDateString("id-ID")+" "+d.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});}
+      html+='<td>'+esc(v)+'</td>';
+    });
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+  $("#ansWrap").innerHTML=html;
+}
+function toggleAnswers(){
+  ansVisible=!ansVisible;
+  $("#ansWrap").style.display=ansVisible?"block":"none";
+  if(ansVisible){renderAnswers();$("#ansWrap").scrollIntoView({behavior:"smooth",block:"start"});}
+}
 function num(v){return (v===""||v==null)?null:Number(v)}
 /* Ambil nilai field dari salah satu nama kolom yang mungkin (teknis atau label Indonesia) */
 function pick(r,keys){for(var i=0;i<keys.length;i++){if(r[keys[i]]!==undefined&&r[keys[i]]!==null&&r[keys[i]]!=="")return r[keys[i]];}return null;}
@@ -140,7 +177,9 @@ function metricCard(label,val,max,accent){
 }
 function renderAll(){
   var rows=applyFilters(ALL,{branch:$("#fBranch").value,from:$("#fFrom").value,to:$("#fTo").value});
+  FILTERED=rows;
   $("#status").textContent=rows.length+" responden";
+  if(ansVisible)renderAnswers();
   if(!rows.length){$("#topRow").innerHTML='<div class="hl"><div class="empty">Belum ada data untuk filter ini.</div></div>';$("#cards").innerHTML="";$("#skmDetail").innerHTML="";return}
   var u=unitAverages(rows),na=npsAvg(rows),cr=complaintRatio(rows);
   var crPill=cr<=10?"pill-good":cr<=25?"pill-warn":"pill-bad";var crTxt=cr<=10?"Terkendali":cr<=25?"Perlu dipantau":"Tinggi";
@@ -159,6 +198,7 @@ function renderAll(){
   ).join("");
 }
 initFilters();load();
+$("#status").addEventListener("click",toggleAnswers);
 </script>
 </body>
 </html>
