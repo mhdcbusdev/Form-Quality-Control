@@ -116,7 +116,7 @@ function applyFilters(rows,f){return rows.filter(function(r){
   return true;
 })}
 function unitAverages(rows){return {Dokter:avgField(rows,COL.Dokter),Perawat:avgField(rows,COL.Perawat),FrontOffice:avgField(rows,COL.FrontOffice)}}
-function cleanAvg(rows){var v=rows.map(function(r){return CLEAN_SCORE[pick(r,COL.kebersihan)]}).filter(function(x){return x!=null});return avg(v)}
+function cleanAvg(rows){var v=rows.map(function(r){var raw=pick(r,COL.kebersihan);if(raw===null||raw==="")return null;var n=Number(raw);if(!isNaN(n)&&n>0)return n;return CLEAN_SCORE[raw];}).filter(function(x){return x!=null});return avg(v)}
 function csat(rows){var per=rows.map(function(r){var v=[num(pick(r,COL.Dokter)),num(pick(r,COL.Perawat)),num(pick(r,COL.FrontOffice))].filter(function(x){return x!=null&&x>0});return v.length?avg(v):null}).filter(function(x){return x!=null});return avg(per)}
 function nps(rows){var v=rows.map(function(r){return num(pick(r,COL.nps))}).filter(function(x){return x!=null&&x>0});if(!v.length)return{score:0,promoter:0,passive:0,detractor:0,n:0};var p=v.filter(function(x){return x>=THRESH.npsPromoterMin}).length;var d=v.filter(function(x){return x<=THRESH.npsDetractorMax}).length;return{score:Math.round((p-d)/v.length*100),promoter:p,passive:v.length-p-d,detractor:d,n:v.length}}
 function npsAvg(rows){var v=rows.map(function(r){return num(pick(r,COL.nps))}).filter(function(x){return x!=null&&x>0});return avg(v)}
