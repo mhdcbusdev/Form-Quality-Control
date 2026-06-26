@@ -197,9 +197,10 @@ function showStep(n){
   scrollToTop();
 }
 function scrollToTop(){
-  // Gulir halaman ini ke atas (berlaku saat dibuka langsung / standalone)
+  // Gulir halaman/iframe ini sendiri ke paling atas
   try{window.scrollTo({top:0,behavior:"smooth"});}catch(e){window.scrollTo(0,0);}
-  // Jika di dalam iframe (mis. embed WordPress), minta halaman induk menggulir ke posisi form
+  try{document.documentElement.scrollTop=0;document.body.scrollTop=0;}catch(e){}
+  // Jika di dalam iframe (embed WordPress), minta induk menggulir ke posisi form
   if(window.parent && window.parent!==window){
     try{window.parent.postMessage({mhdcForm:"scrollTop"},"*");}catch(e){}
   }
