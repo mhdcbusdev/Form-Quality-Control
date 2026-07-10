@@ -145,7 +145,7 @@ textarea{resize:vertical;min-height:90px;margin-bottom:0}
 </main>
 <script>
 /* ====== EDIT DI SINI: tempel URL Apps Script Anda (.../exec) ====== */
-var API_URL = "https://script.google.com/macros/s/AKfycbyVkZPLWIw5IO4L8TI89PeJOgkXimFKIHITdICweS9wGSJl3W3WJnMKBgSbsZLGRkbe/exec";
+var API_URL = "https://script.google.com/macros/s/AKfycbxN7TZoqmDW7fVbGT5HhzUX3tq0yUQ0F311hBMmkI3xpJl1heG4bX-z8-iXQcX9HhQNBQ/exec";
 var ACCESS_KEY = "hZ5ghVCe4EpgHgnuK_TDOpbU";
 
 var BRANCHES=["Medikids Batam","Medikids Bekasi","Medikids Bintaro","Medikids Bogor","Medikids BSD","Medikids Cibinong","Medikids Cibubur","Medikids Cikarang","Medikids Cikupa","Medikids Cilegon","Medikids Cipondoh Tangerang","Medikids Cirebon","Medikids Dago Bandung","Medikids Depok","Medikids Grand Wisata","Medikids Green Terrace","Medikids JGC","Medikids Kalimalang","Medikids Karawaci","Medikids Karawang","Medikids Kebon Jeruk","Medikids Kemang","Medikids Lebak Bulus","Medikids Makassar","Medikids Malang","Medikids Padang","Medikids Palembang","Medikids Pancoran Mas","Medikids Pekanbaru","Medikids Pondok Indah","Medikids Rawamangun","Medikids Rempoa","Medikids Sawangan","Medikids Semarang","Medikids Serpong","Medikids Solo","Medikids Sunter","Medikids Surabaya","MHDC Bulog","MHDC Kalibata","MHDC Sentraya","MHDC Wisma BNI 46"];
@@ -154,9 +154,9 @@ var STAR_LABELS={1:{t:"Sangat Tidak Puas",e:"😟"},2:{t:"Tidak Puas",e:"🙁"},
 var NPS_MAX=5;
 var SKM=[
 {id:"U1",t:"Bagaimana penilaian terhadap alur pendaftaran dan pelayanan di klinik?",o:["Tidak sesuai","Kurang sesuai","Sesuai","Sangat sesuai"]},
-{id:"U3",t:"Bagaimana penilaian terhadap kecepatan waktu pelayanan di klinik?",o:["Tidak cepat","Kurang cepat","Cepat","Sangat cepat"]},
-{id:"U4",t:"Bagaimana penilaian terhadap biaya pelayanan di klinik?",o:["Sangat mahal","Cukup mahal","Murah","Sangat murah"]},
-{id:"U9",t:"Bagaimana penilaian terhadap penanganan pengaduan di klinik?",o:["Tidak ada","Ada tetapi tidak berfungsi","Berfungsi kurang maksimal","Dikelola dengan baik"]}
+{id:"U2",t:"Bagaimana penilaian terhadap kecepatan waktu pelayanan di klinik?",o:["Tidak cepat","Kurang cepat","Cepat","Sangat cepat"]},
+{id:"U3",t:"Bagaimana penilaian terhadap biaya pelayanan di klinik?",o:["Sangat mahal","Cukup mahal","Murah","Sangat murah"]},
+{id:"U4",t:"Bagaimana penilaian terhadap penanganan pengaduan di klinik?",o:["Tidak ada","Ada tetapi tidak berfungsi","Berfungsi kurang maksimal","Dikelola dengan baik"]}
 ];
 
 var $=function(s){return document.querySelector(s)};
