@@ -86,8 +86,8 @@ body{margin:0;font-family:var(--font);background:var(--bg);color:var(--ink);-web
 </div>
 <script>
 /* ====== EDIT DI SINI: tempel URL Apps Script Anda (.../exec) ====== */
-var API_URL = "https://script.google.com/macros/s/AKfycbz1M6iwlKfCOq7pDklIyhjJ8qCQ6exM0h4g4mcfSPEswjdatxqoJ2bIWUABQAAz3cPsUg/exec";
-var ACCESS_KEY = "29c12e94-a5d0-4293-91dc-38faa01231c9";
+var API_URL = "https://dashboard-form-quality-control.mhdc.co.id/proxy.php";
+   /* ACCESS_KEY dihapus - disimpan di server, tidak pernah dikirim ke browser */
 
 /* Daftar cabang — sesuaikan */
 var BRANCHES=["Medikids Batam","Medikids Bekasi","Medikids Bintaro","Medikids Bogor","Medikids BSD","Medikids Cibinong","Medikids Cibubur","Medikids Cikarang","Medikids Cikupa","Medikids Cilegon","Medikids Cipondoh Tangerang","Medikids Cirebon","Medikids Dago Bandung","Medikids Depok","Medikids Grand Wisata","Medikids Green Terrace","Medikids JGC","Medikids Kalimalang","Medikids Karawaci","Medikids Karawang","Medikids Kebon Jeruk","Medikids Kemang","Medikids Lebak Bulus","Medikids Makassar","Medikids Malang","Medikids Padang","Medikids Palembang","Medikids Pancoran Mas","Medikids Pekanbaru","Medikids Pondok Indah","Medikids Rawamangun","Medikids Rempoa","Medikids Sawangan","Medikids Semarang","Medikids Serpong","Medikids Solo","Medikids Sunter","Medikids Surabaya","MHDC Bulog","MHDC Kalibata","MHDC Sentraya","MHDC Wisma BNI 46"];
@@ -171,7 +171,7 @@ function initFilters(){
   ["#fBranch","#fFrom","#fTo"].forEach(function(s){$(s).addEventListener("change",renderAll)});
 }
 function load(){
-  fetch(API_URL+"?action=data&key="+encodeURIComponent(ACCESS_KEY)).then(function(r){return r.json()}).then(function(o){ALL=o.rows||[];renderAll()}).catch(function(){ALL=[];$("#status").textContent="Gagal memuat";renderAll()});
+  fetch(API_URL+"?action=data").then(function(r){return r.json()}).then(function(o){ALL=o.rows||[];renderAll()}).catch(function(){ALL=[];$("#status").textContent="Gagal memuat";renderAll()});
 }
 function metricCard(label,val,max,accent){
   var st=statusOf(val,max);var pct=val&&!isNaN(val)?Math.min(100,val/max*100):0;
