@@ -90,8 +90,10 @@ body{margin:0;font-family:var(--font);background:var(--bg);color:var(--ink);-web
 var API_URL = "/proxy.php";
    /* ACCESS_KEY dihapus - disimpan di server, tidak pernah dikirim ke browser */
 
-/* Daftar cabang — sesuaikan */
-var BRANCHES=["Medikids Batam","Medikids Bekasi","Medikids Bintaro","Medikids Bogor","Medikids BSD","Medikids Cibinong","Medikids Cibubur","Medikids Cikarang","Medikids Cikupa","Medikids Cilegon","Medikids Cipondoh Tangerang","Medikids Cirebon","Medikids Dago Bandung","Medikids Depok","Medikids Grand Wisata","Medikids Green Terrace","Medikids JGC","Medikids Kalimalang","Medikids Karawaci","Medikids Karawang","Medikids Kebon Jeruk","Medikids Kemang","Medikids Lebak Bulus","Medikids Makassar","Medikids Malang","Medikids Padang","Medikids Palembang","Medikids Pancoran Mas","Medikids Pekanbaru","Medikids Pondok Indah","Medikids Rawamangun","Medikids Rempoa","Medikids Sawangan","Medikids Semarang","Medikids Serpong","Medikids Solo","Medikids Sunter","Medikids Surabaya","MHDC Bulog","MHDC Kalibata","MHDC Sentraya","MHDC Wisma BNI 46"];
+/* Sumber utama daftar cabang = config.gs (Apps Script) via action=branches.
+   Array ini sengaja KOSONG: diisi otomatis saat dashboard dimuat.
+   Tambah/ubah cabang cukup di config.gs, TIDAK perlu edit file ini. */
+var BRANCHES=[];
 var THRESH = { npsPromoterMin:5, npsDetractorMax:3, complaintScoreMax:2 };
 var CLEAN_SCORE = {"Sangat Bersih":5,"Bersih":3.75,"Cukup Bersih":2.5,"Perlu Perbaikan":1.25};
 /* Pertanyaan SKM yang aktif (harus cocok dgn form). Skala 1-4. */
@@ -200,7 +202,13 @@ function renderAll(){
     SKM_ITEMS.map(function(it){return metricCard(it.label,skmItemAvg(rows,it.id),4,"#7c5cbf");})
   ).join("");
 }
-initFilters();load();
+function loadBranches(cb){
+  fetch(API_URL+"?action=branches").then(function(r){return r.json()}).then(function(o){
+    if(o&&o.ok&&o.branches&&o.branches.length){BRANCHES=o.branches;}
+    cb();
+  }).catch(function(){cb();});
+}
+loadBranches(function(){ initFilters(); load(); });
 $("#status").addEventListener("click",toggleAnswers);
 </script>
 </body>
