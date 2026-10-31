@@ -147,10 +147,29 @@ textarea{resize:vertical;min-height:90px;margin-bottom:0}
 /* ====== EDIT DI SINI: tempel URL Apps Script Anda (.../exec) ====== */
 var API_URL = "https://dashboard-form-quality-control.mhdc.co.id/proxy.php";
    /* ACCESS_KEY dihapus - disimpan di server, tidak pernah dikirim ke browser */
-/* Sumber utama daftar cabang = config.gs (Apps Script) via action=branches.
-   Array ini sengaja KOSONG: diisi otomatis saat form dimuat.
-   Tambah/ubah cabang cukup di config.gs, TIDAK perlu edit file ini. */
-var BRANCHES=[];
+/* Daftar cabang = FALLBACK bawaan (di bawah) + override otomatis dari
+   config.gs (Apps Script) via action=branches saat form dimuat.
+   Kalau action=branches jalan, list di bawah akan ditimpa list terbaru.
+   Kalau gagal, form TETAP bisa diisi pakai list bawaan ini.
+   Tambah/ubah cabang: idealnya di config.gs; kalau mau cepat, edit list ini. */
+var BRANCHES=[
+  // --- MHDC ---
+  "MHDC Bulog","MHDC Kalibata","MHDC Sentraya","MHDC Wisma BNI 46",
+  // --- Medikids ---
+  "Medikids Batam","Medikids Bekasi","Medikids Bintaro","Medikids BSD",
+  "Medikids Cibinong","Medikids Cibubur","Medikids Cikarang","Medikids Dago Bandung",
+  "Medikids Grand Wisata","Medikids Green Terrace","Medikids Karawaci","Medikids Kebon Jeruk",
+  "Medikids Kemang","Medikids Lebak Bulus","Medikids Makassar","Medikids Malang",
+  "Medikids Palembang","Medikids Pondok Indah","Medikids Rawamangun","Medikids Rempoa",
+  "Medikids RS Regina Maris Bekasi","Medikids Semarang","Medikids Serpong","Medikids Solo",
+  "Medikids Sunter",
+  // --- Medikids Wakaf ---
+  "Medikids Wakaf Bogor","Medikids Wakaf Cikupa","Medikids Wakaf Cilegon",
+  "Medikids Wakaf Cipondoh Tangerang","Medikids Wakaf Depok","Medikids Wakaf JGC",
+  "Medikids Wakaf Kalimalang","Medikids Wakaf Karawang","Medikids Wakaf Padang",
+  "Medikids Wakaf Pancoran Mas","Medikids Wakaf Pekanbaru","Medikids Wakaf Sawangan",
+  "Medikids Wakaf Surabaya"
+];
 var RATING_UNITS=[{key:"Dokter",label:"Pelayanan <b>Dokter</b>"},{key:"Perawat",label:"Pelayanan <b>Perawat</b>"},{key:"FrontOffice",label:"Pelayanan <b>Front Office</b>"}];
 var STAR_LABELS={1:{t:"Sangat Tidak Puas",e:"😟"},2:{t:"Tidak Puas",e:"🙁"},3:{t:"Cukup Puas",e:"😐"},4:{t:"Puas",e:"🙂"},5:{t:"Sangat Puas",e:"😄"}};
 var NPS_MAX=5;
